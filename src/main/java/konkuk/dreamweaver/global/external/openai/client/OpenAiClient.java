@@ -50,10 +50,10 @@ public class OpenAiClient {
     }
 
 
-    public String sendImageReqeust(List<ChatRequestMessage> messages) {
+    public String sendImageReqeust(String prompt) {
         OpenAiImageRequest request = new OpenAiImageRequest(
                 properties.image().model(),
-                messages,
+                prompt,
                 1,
                 properties.image().size()
         );
