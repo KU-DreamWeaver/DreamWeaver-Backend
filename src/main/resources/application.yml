@@ -51,7 +51,7 @@ spring:
     activate:
       on-profile: local-port
 server:
-  port: 8080
+  port: 8081
 
 ---
 spring:
@@ -73,4 +73,4 @@ spring:
     activate:
       on-profile: dev-port
 server:
-  port: 8081
+  port: 8080
