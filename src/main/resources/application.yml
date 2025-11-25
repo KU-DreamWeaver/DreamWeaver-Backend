@@ -5,7 +5,7 @@ spring:
     group:
       local: local-db, local-port, common
       dev : dev-db, dev-port, common
-    active: local
+    active: ${ACTIVE_PROFILE}
 
 ---
 spring:
@@ -20,6 +20,7 @@ spring:
         format_sql: true
         show_sql: true
         highlight_sql: true
+
 ---
 spring:
   config:
@@ -33,6 +34,16 @@ spring:
     username: ${LOCAL_DATASOURCE_USERNAME}
     password: ${LOCAL_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+openai:
+  secret-key: ${OPEN_AI_KEY}
+  base-url: https://api.openai.com/v1
+  chat:
+    model: ${OPEN_AI_TEXT_MODEL}
+    max-tokens: ${OPEN_AI_MAX_TOKEN}
+    temperature: ${OPEN_AI_TEMPERATURE}
+  image:
+    model: ${OPEN_AI_IMAGE_MODEL}
+    size: 1024x1024
 
 ---
 spring:
