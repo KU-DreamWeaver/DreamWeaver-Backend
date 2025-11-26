@@ -56,7 +56,8 @@ public class OpenAiClient {
                     properties.image().model(),
                     prompt,
                     1,
-                    properties.image().size()
+                    properties.image().size(),
+                    properties.image().quality()
             );
 
             OpenAiImageResponse response = restClient.post()
@@ -82,7 +83,6 @@ public class OpenAiClient {
             throw new IllegalStateException("OpenAI 이미지 생성 실패: url과 b64_json이 모두 비어 있습니다.");
 
         } catch (Exception e) {
-            System.out.println("🔥 OpenAI 이미지 생성 실패: " + e.getMessage());
             throw new IllegalStateException("이미지 생성 요청 실패: " + e.getMessage());
         }
     }
