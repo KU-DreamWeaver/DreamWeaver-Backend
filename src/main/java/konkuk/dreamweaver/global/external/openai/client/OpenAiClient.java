@@ -50,23 +50,41 @@ public class OpenAiClient {
     }
 
 
-    public String sendImageReqeust(String prompt) {
-        OpenAiImageRequest request = new OpenAiImageRequest(
-                properties.image().model(),
-                prompt,
-                1,
-                properties.image().size()
-        );
+    public String sendImageRequest(String prompt) {
+        try {
+            OpenAiImageRequest request = new OpenAiImageRequest(
+                    properties.image().model(),
+                    prompt,
+                    1,
+                    properties.image().size()
+            );
 
-        OpenAiImageResponse response = restClient.post()
-                .uri(IMAGE_REQUEST_URI)
-                .body(request)
-                .retrieve()
-                .body(OpenAiImageResponse.class);
+            OpenAiImageResponse response = restClient.post()
+                    .uri(IMAGE_REQUEST_URI)
+                    .body(request)
+                    .retrieve()
+                    .body(OpenAiImageResponse.class);
 
-        OpenAiImageResponse safeResponse = Objects.requireNonNull(response);
+            if (response == null || response.data() == null || response.data().isEmpty()) {
+                throw new IllegalStateException("OpenAI 이미지 생성 실패: data 필드가 비어 있습니다.");
+            }
 
-        return safeResponse.data().get(0).url();
+            OpenAiImageResponse.Data data = response.data().get(0);
+
+            if (data.url() != null && !data.url().isBlank()) {
+                return data.url();
+            }
+
+            if (data.b64Json() != null && !data.b64Json().isBlank()) {
+                return "data:image/png;base64," + data.b64Json();
+            }
+
+            throw new IllegalStateException("OpenAI 이미지 생성 실패: url과 b64_json이 모두 비어 있습니다.");
+
+        } catch (Exception e) {
+            System.out.println("🔥 OpenAI 이미지 생성 실패: " + e.getMessage());
+            throw new IllegalStateException("이미지 생성 요청 실패: " + e.getMessage());
+        }
     }
 
 

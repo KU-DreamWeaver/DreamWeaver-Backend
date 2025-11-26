@@ -8,7 +8,8 @@ public record OpenAiImageResponse(
         List<Data> data
 ) {
     public record Data(
-            String url
-    ) {
-    }
+            String url,
+            @JsonProperty("b64_json") String b64Json,
+            @JsonProperty("revised_prompt") String revisedPrompt
+    ) {}
 }

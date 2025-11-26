@@ -1,6 +1,5 @@
 package konkuk.dreamweaver.domain.dreamhistory.service;
 
-import konkuk.dreamweaver.domain.dreamhistory.dto.request.DreamHistoryRequest;
 import konkuk.dreamweaver.domain.dreamhistory.dto.response.DreamHistoryResponse;
 import konkuk.dreamweaver.domain.dreamhistory.repository.DreamHistoryRepository;
 import konkuk.dreamweaver.global.external.openai.client.OpenAiClient;
@@ -31,7 +30,7 @@ public class DreamHistoryService {
                 ))
         ));
 
-        String imageUrl = openAiClient.sendImageReqeust(String.format(OpenAiPrompt.IMAGE_PROMPT, dreamDescription));
+        String imageUrl = openAiClient.sendImageRequest(String.format(OpenAiPrompt.IMAGE_PROMPT, dreamDescription));
 
         return DreamHistoryResponse.of(dreamDescription, imageUrl);
 
