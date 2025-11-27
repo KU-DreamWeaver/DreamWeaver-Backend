@@ -1,10 +1,14 @@
 package konkuk.dreamweaver.global.external.openai.client;
 
+import konkuk.dreamweaver.global.exception.CustomException;
 import konkuk.dreamweaver.global.external.openai.dto.request.ChatRequestMessage;
 import konkuk.dreamweaver.global.external.openai.dto.request.OpenAiImageRequest;
 import konkuk.dreamweaver.global.external.openai.dto.request.OpenAiTextRequest;
 import konkuk.dreamweaver.global.external.openai.dto.response.OpenAiImageResponse;
 import konkuk.dreamweaver.global.external.openai.dto.response.OpenAiTextResponse;
+import konkuk.dreamweaver.global.external.openai.errorcode.OpenAiErrorCode;
+import konkuk.dreamweaver.global.external.s3.client.S3ImageUploader;
+import konkuk.dreamweaver.global.external.s3.errorcode.S3ErrorCode;
 import konkuk.dreamweaver.global.properties.OpenAiProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,6 +18,9 @@ import org.springframework.web.client.RestClient;
 import java.util.List;
 import java.util.Objects;
 
+import static konkuk.dreamweaver.global.external.openai.errorcode.OpenAiErrorCode.*;
+import static konkuk.dreamweaver.global.external.s3.errorcode.S3ErrorCode.*;
+
 @Component
 public class OpenAiClient {
 
@@ -22,9 +29,11 @@ public class OpenAiClient {
 
     private final RestClient restClient;
     private final OpenAiProperties properties;
+    private final S3ImageUploader s3ImageUploader;
 
-    public OpenAiClient(OpenAiProperties properties) {
+    public OpenAiClient(OpenAiProperties properties, S3ImageUploader s3ImageUploader) {
         this.properties = properties;
+        this.s3ImageUploader = s3ImageUploader;
         this.restClient = RestClient.builder()
                 .baseUrl(properties.baseUrl())
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + properties.secretKey())
@@ -67,7 +76,7 @@ public class OpenAiClient {
                     .body(OpenAiImageResponse.class);
 
             if (response == null || response.data() == null || response.data().isEmpty()) {
-                throw new IllegalStateException("OpenAI 이미지 생성 실패: data 필드가 비어 있습니다.");
+                throw new CustomException(INVALID_OPENAI_RESPONSE);
             }
 
             OpenAiImageResponse.Data data = response.data().get(0);
@@ -77,13 +86,15 @@ public class OpenAiClient {
             }
 
             if (data.b64Json() != null && !data.b64Json().isBlank()) {
-                return "data:image/png;base64," + data.b64Json();
+                return s3ImageUploader.uploadBase64Image(data.b64Json());
             }
 
-            throw new IllegalStateException("OpenAI 이미지 생성 실패: url과 b64_json이 모두 비어 있습니다.");
+            throw new CustomException(EMPTY_IMAGE_RESPONSE);
 
+        } catch (CustomException ce) {
+            throw ce;
         } catch (Exception e) {
-            throw new IllegalStateException("이미지 생성 요청 실패: " + e.getMessage());
+            throw new CustomException(IMAGE_GENERATION_FAILED);
         }
     }
 
