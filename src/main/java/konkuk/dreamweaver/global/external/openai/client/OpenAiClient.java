@@ -1,10 +1,14 @@
 package konkuk.dreamweaver.global.external.openai.client;
 
+import konkuk.dreamweaver.global.exception.CustomException;
 import konkuk.dreamweaver.global.external.openai.dto.request.ChatRequestMessage;
 import konkuk.dreamweaver.global.external.openai.dto.request.OpenAiImageRequest;
 import konkuk.dreamweaver.global.external.openai.dto.request.OpenAiTextRequest;
 import konkuk.dreamweaver.global.external.openai.dto.response.OpenAiImageResponse;
 import konkuk.dreamweaver.global.external.openai.dto.response.OpenAiTextResponse;
+import konkuk.dreamweaver.global.external.openai.errorcode.OpenAiErrorCode;
+import konkuk.dreamweaver.global.external.s3.client.S3ImageUploader;
+import konkuk.dreamweaver.global.external.s3.errorcode.S3ErrorCode;
 import konkuk.dreamweaver.global.properties.OpenAiProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,6 +18,9 @@ import org.springframework.web.client.RestClient;
 import java.util.List;
 import java.util.Objects;
 
+import static konkuk.dreamweaver.global.external.openai.errorcode.OpenAiErrorCode.*;
+import static konkuk.dreamweaver.global.external.s3.errorcode.S3ErrorCode.*;
+
 @Component
 public class OpenAiClient {
 
@@ -22,9 +29,11 @@ public class OpenAiClient {
 
     private final RestClient restClient;
     private final OpenAiProperties properties;
+    private final S3ImageUploader s3ImageUploader;
 
-    public OpenAiClient(OpenAiProperties properties) {
+    public OpenAiClient(OpenAiProperties properties, S3ImageUploader s3ImageUploader) {
         this.properties = properties;
+        this.s3ImageUploader = s3ImageUploader;
         this.restClient = RestClient.builder()
                 .baseUrl(properties.baseUrl())
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + properties.secretKey())
@@ -50,23 +59,43 @@ public class OpenAiClient {
     }
 
 
-    public String sendImageReqeust(List<ChatRequestMessage> messages) {
-        OpenAiImageRequest request = new OpenAiImageRequest(
-                properties.image().model(),
-                messages,
-                1,
-                properties.image().size()
-        );
+    public String sendImageRequest(String prompt) {
+        try {
+            OpenAiImageRequest request = new OpenAiImageRequest(
+                    properties.image().model(),
+                    prompt,
+                    1,
+                    properties.image().size(),
+                    properties.image().quality()
+            );
 
-        OpenAiImageResponse response = restClient.post()
-                .uri(IMAGE_REQUEST_URI)
-                .body(request)
-                .retrieve()
-                .body(OpenAiImageResponse.class);
+            OpenAiImageResponse response = restClient.post()
+                    .uri(IMAGE_REQUEST_URI)
+                    .body(request)
+                    .retrieve()
+                    .body(OpenAiImageResponse.class);
 
-        OpenAiImageResponse safeResponse = Objects.requireNonNull(response);
+            if (response == null || response.data() == null || response.data().isEmpty()) {
+                throw new CustomException(INVALID_OPENAI_RESPONSE);
+            }
 
-        return safeResponse.data().get(0).url();
+            OpenAiImageResponse.Data data = response.data().get(0);
+
+            if (data.url() != null && !data.url().isBlank()) {
+                return data.url();
+            }
+
+            if (data.b64Json() != null && !data.b64Json().isBlank()) {
+                return s3ImageUploader.uploadBase64Image(data.b64Json());
+            }
+
+            throw new CustomException(EMPTY_IMAGE_RESPONSE);
+
+        } catch (CustomException ce) {
+            throw ce;
+        } catch (Exception e) {
+            throw new CustomException(IMAGE_GENERATION_FAILED);
+        }
     }
 
 

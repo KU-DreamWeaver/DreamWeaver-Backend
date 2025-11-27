@@ -11,7 +11,8 @@ import java.util.List;
 @ToString
 public class OpenAiImageRequest {
     private String model;
-    private List<ChatRequestMessage> messages;
+    private String prompt;
     private int n;
     private String size;
+    private String quality;
 }

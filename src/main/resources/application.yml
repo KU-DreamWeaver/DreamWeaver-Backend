@@ -44,6 +44,19 @@ openai:
   image:
     model: ${OPEN_AI_IMAGE_MODEL}
     size: 1024x1024
+    quality: low
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: dreamweaver-bucket
+      base-url: https://dreamweaver-bucket.s3.ap-northeast-2.amazonaws.com
+
 
 ---
 spring:
@@ -51,7 +64,7 @@ spring:
     activate:
       on-profile: local-port
 server:
-  port: 8080
+  port: 8081
 
 ---
 spring:
@@ -73,4 +86,4 @@ spring:
     activate:
       on-profile: dev-port
 server:
-  port: 8081
+  port: 8080

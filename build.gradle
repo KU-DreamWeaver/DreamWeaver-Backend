@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.7'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version '3.2.4'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
 group = 'konkuk'
@@ -48,6 +48,12 @@ dependencies {
 
     //Open API
     implementation 'io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4'
+
+    //S3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    implementation 'software.amazon.awssdk:s3:2.25.66'
+    implementation 'software.amazon.awssdk:auth:2.25.66'
+    implementation 'software.amazon.awssdk:regions:2.25.66'
 
 }
 

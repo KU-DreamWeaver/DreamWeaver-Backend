@@ -17,7 +17,8 @@ public record OpenAiProperties(
 
     public record ImageProperties(
             String model,
-            String size
+            String size,
+            String quality
     ) {}
 }
 
