@@ -19,6 +19,6 @@ public class DreamHistoryController {
 
     @PostMapping
     public BaseResponse<DreamHistoryResponse> createDreamHistory(@RequestBody DreamHistoryRequest req) {
-        return BaseResponse.ok(dreamHistoryService.createDreamHistory(req.keywords(),req.description(), req.emotion()),"해몽 요약 생성 성공");
+        return BaseResponse.ok(dreamHistoryService.createDreamHistory(req.keywords(),req.description(), req.emotion(), req.userId()),"해몽 요약 생성 성공");
     }
 }
