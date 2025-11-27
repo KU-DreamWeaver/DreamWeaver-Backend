@@ -46,6 +46,18 @@ openai:
     size: 1024x1024
     quality: low
 
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: dreamweaver-bucket
+      base-url: https://dreamweaver-bucket.s3.ap-northeast-2.amazonaws.com
+
+
 ---
 spring:
   config:
