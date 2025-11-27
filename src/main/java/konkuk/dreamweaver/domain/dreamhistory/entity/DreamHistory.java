@@ -32,4 +32,12 @@ public class DreamHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public static DreamHistory create(String description, String imageUrl, User user) {
+        return DreamHistory.builder()
+                .description(description)
+                .imageUrl(imageUrl)
+                .user(user)
+                .build();
+    }
 }
