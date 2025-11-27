@@ -21,19 +21,6 @@ spring:
         show_sql: true
         highlight_sql: true
 
----
-spring:
-  config:
-    activate:
-      on-profile: local-db
-  jpa:
-    hibernate:
-      ddl-auto: update
-  datasource:
-    url: ${LOCAL_DATASOURCE_URL}
-    username: ${LOCAL_DATASOURCE_USERNAME}
-    password: ${LOCAL_DATASOURCE_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
 openai:
   secret-key: ${OPEN_AI_KEY}
   base-url: https://api.openai.com/v1
@@ -56,6 +43,21 @@ cloud:
     s3:
       bucket: dreamweaver-bucket
       base-url: https://dreamweaver-bucket.s3.ap-northeast-2.amazonaws.com
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local-db
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: ${LOCAL_DATASOURCE_URL}
+    username: ${LOCAL_DATASOURCE_USERNAME}
+    password: ${LOCAL_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
 
 
 ---
