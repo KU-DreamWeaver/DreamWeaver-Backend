@@ -29,12 +29,15 @@ public class DreamHistory {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    private String emotion;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    public static DreamHistory create(String description, String imageUrl, User user) {
+    public static DreamHistory create(String emotion, String description, String imageUrl, User user) {
         return DreamHistory.builder()
+                .emotion(emotion)
                 .description(description)
                 .imageUrl(imageUrl)
                 .user(user)
