@@ -8,7 +8,6 @@ import konkuk.dreamweaver.domain.dreamhistory.repository.DreamHistoryKeywordRepo
 import konkuk.dreamweaver.domain.dreamhistory.repository.DreamHistoryRepository;
 import konkuk.dreamweaver.domain.user.entity.User;
 import konkuk.dreamweaver.domain.user.entity.repository.UserRepository;
-import konkuk.dreamweaver.domain.user.errorcode.UserErrorCode;
 import konkuk.dreamweaver.global.exception.CustomException;
 import konkuk.dreamweaver.global.external.openai.client.OpenAiClient;
 import konkuk.dreamweaver.global.external.openai.constant.OpenAiPrompt;
@@ -70,7 +69,23 @@ public class DreamHistoryService {
                 dreamHistoryRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
 
         return histories.stream()
-                .map(DreamListResponse::from)
+                .map(history -> {
+                    List<String> keywords = dreamHistoryKeywordRepository
+                            .findAllByDreamHistory(history)
+                            .stream()
+                            .map(DreamHistoryKeyword::getKeyword)
+                            .toList();
+
+                    return DreamListResponse.of(
+                            history.getId(),
+                            history.getUser().getId(),
+                            keywords,
+                            history.getDescription(),
+                            history.getEmotion(),
+                            history.getImageUrl(),
+                            history.getCreatedAt()
+                    );
+                })
                 .toList();
     }
 }
