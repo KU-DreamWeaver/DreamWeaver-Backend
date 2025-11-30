@@ -36,7 +36,7 @@ public class DreamHistoryService {
     @Transactional
     public DreamHistoryResponse createDreamHistory(List<String> keywords, String description, String emotion, Long userId) {
 
-        String dreamDescription = openAiClient.sendTextRequest(List.of(
+        String aiSummary = openAiClient.sendTextRequest(List.of(
                 new ChatRequestMessage("system", OpenAiPrompt.TEXT_SYSTEM_PROMPT),
                 new ChatRequestMessage("user", String.format(OpenAiPrompt.TEXT_USER_PROMPT,
                         keywords, description, emotion
@@ -45,9 +45,9 @@ public class DreamHistoryService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        String imageUrl = openAiClient.sendImageRequest(String.format(OpenAiPrompt.IMAGE_PROMPT, dreamDescription));
+        String imageUrl = openAiClient.sendImageRequest(String.format(OpenAiPrompt.IMAGE_PROMPT, aiSummary));
 
-        DreamHistory dreamHistory = DreamHistory.create(emotion, dreamDescription, imageUrl, user);
+        DreamHistory dreamHistory = DreamHistory.create(emotion, aiSummary, description, imageUrl, user);
         dreamHistoryRepository.save(dreamHistory);
 
         List<DreamHistoryKeyword> keywordEntities = keywords.stream()
@@ -80,6 +80,7 @@ public class DreamHistoryService {
                             history.getId(),
                             history.getUser().getId(),
                             keywords,
+                            history.getAiSummary(),
                             history.getDescription(),
                             history.getEmotion(),
                             history.getImageUrl(),

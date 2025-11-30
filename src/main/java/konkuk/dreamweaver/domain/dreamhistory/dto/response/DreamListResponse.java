@@ -1,7 +1,5 @@
 package konkuk.dreamweaver.domain.dreamhistory.dto.response;
 
-import konkuk.dreamweaver.domain.dreamhistory.entity.DreamHistory;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -9,6 +7,7 @@ public record DreamListResponse(
         Long dreamHistoryId,
         Long userId,
         List<String> keywords,
+        String aiSummary,
         String description,
         String emotion,
         String imageUrl,
@@ -18,6 +17,7 @@ public record DreamListResponse(
             Long dreamHistoryId,
             Long userId,
             List<String> keywords,
+            String aiSummary,
             String description,
             String emotion,
             String imageUrl,
@@ -27,6 +27,7 @@ public record DreamListResponse(
                 dreamHistoryId,
                 userId,
                 keywords,
+                aiSummary,
                 description,
                 emotion,
                 imageUrl,

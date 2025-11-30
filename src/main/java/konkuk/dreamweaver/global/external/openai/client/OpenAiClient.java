@@ -94,7 +94,7 @@ public class OpenAiClient {
         } catch (CustomException ce) {
             throw ce;
         } catch (Exception e) {
-            throw new CustomException(IMAGE_GENERATION_FAILED);
+            throw new CustomException(IMAGE_GENERATION_FAILED, e.getMessage());
         }
     }
 
