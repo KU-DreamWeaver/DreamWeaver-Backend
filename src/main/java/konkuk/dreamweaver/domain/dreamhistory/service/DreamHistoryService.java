@@ -47,7 +47,7 @@ public class DreamHistoryService {
         DreamHistory dreamHistory = DreamHistory.create(dreamDescription, imageUrl, user);
         dreamHistoryRepository.save(dreamHistory);
 
-        return DreamHistoryResponse.of(dreamDescription, imageUrl);
+        return DreamHistoryResponse.from(dreamHistory);
 
     }
 
