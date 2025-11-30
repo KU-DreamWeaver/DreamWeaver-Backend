@@ -3,6 +3,8 @@ package konkuk.dreamweaver.domain.dreamhistory.service;
 import konkuk.dreamweaver.domain.dreamhistory.dto.response.DreamHistoryResponse;
 import konkuk.dreamweaver.domain.dreamhistory.dto.response.DreamListResponse;
 import konkuk.dreamweaver.domain.dreamhistory.entity.DreamHistory;
+import konkuk.dreamweaver.domain.dreamhistory.entity.DreamHistoryKeyword;
+import konkuk.dreamweaver.domain.dreamhistory.repository.DreamHistoryKeywordRepository;
 import konkuk.dreamweaver.domain.dreamhistory.repository.DreamHistoryRepository;
 import konkuk.dreamweaver.domain.user.entity.User;
 import konkuk.dreamweaver.domain.user.entity.repository.UserRepository;
@@ -26,6 +28,8 @@ public class DreamHistoryService {
 
     private final DreamHistoryRepository dreamHistoryRepository;
 
+    private final DreamHistoryKeywordRepository dreamHistoryKeywordRepository;
+
     private final UserRepository userRepository;
 
     private final OpenAiClient openAiClient;
@@ -44,8 +48,14 @@ public class DreamHistoryService {
 
         String imageUrl = openAiClient.sendImageRequest(String.format(OpenAiPrompt.IMAGE_PROMPT, dreamDescription));
 
-        DreamHistory dreamHistory = DreamHistory.create(dreamDescription, imageUrl, user);
+        DreamHistory dreamHistory = DreamHistory.create(emotion, dreamDescription, imageUrl, user);
         dreamHistoryRepository.save(dreamHistory);
+
+        List<DreamHistoryKeyword> keywordEntities = keywords.stream()
+                .map(keyword -> DreamHistoryKeyword.create(keyword, dreamHistory))
+                .toList();
+
+        dreamHistoryKeywordRepository.saveAll(keywordEntities);
 
         return DreamHistoryResponse.from(dreamHistory);
 
