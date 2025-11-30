@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-    private static final String frondEndOrigin = "";
+    private static final String frondEndOrigin = "https://dreamweavers.netlify.app";
 
     private static final String backEndOrigin = "https://dreamweaverss.store";
 
