@@ -1,6 +1,7 @@
 package konkuk.dreamweaver.domain.dreamhistory.service;
 
 import konkuk.dreamweaver.domain.dreamhistory.dto.response.DreamHistoryResponse;
+import konkuk.dreamweaver.domain.dreamhistory.dto.response.DreamListResponse;
 import konkuk.dreamweaver.domain.dreamhistory.entity.DreamHistory;
 import konkuk.dreamweaver.domain.dreamhistory.repository.DreamHistoryRepository;
 import konkuk.dreamweaver.domain.user.entity.User;
@@ -48,5 +49,18 @@ public class DreamHistoryService {
 
         return DreamHistoryResponse.of(dreamDescription, imageUrl);
 
+    }
+
+    public List<DreamListResponse> getDreamHistoriesByUser(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new CustomException(USER_NOT_FOUND);
+        }
+
+        List<DreamHistory> histories =
+                dreamHistoryRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
+
+        return histories.stream()
+                .map(DreamListResponse::from)
+                .toList();
     }
 }
