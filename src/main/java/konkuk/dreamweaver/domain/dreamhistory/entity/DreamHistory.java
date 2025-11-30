@@ -21,10 +21,12 @@ public class DreamHistory {
     private Long id;
 
     @Column(columnDefinition = "LONGTEXT")
-    private String description;
+    private String aiSummary;
 
     @Column(columnDefinition = "LONGTEXT")
     private String imageUrl;
+
+    private String description;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -35,9 +37,10 @@ public class DreamHistory {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public static DreamHistory create(String emotion, String description, String imageUrl, User user) {
+    public static DreamHistory create(String emotion, String aiSummary, String description, String imageUrl, User user) {
         return DreamHistory.builder()
                 .emotion(emotion)
+                .aiSummary(aiSummary)
                 .description(description)
                 .imageUrl(imageUrl)
                 .user(user)

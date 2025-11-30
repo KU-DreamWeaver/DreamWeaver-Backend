@@ -5,7 +5,7 @@ import konkuk.dreamweaver.domain.dreamhistory.entity.DreamHistory;
 import java.time.LocalDateTime;
 
 public record DreamListResponse(
-        String description,
+        String aiSummary,
         String imageUrl,
         LocalDateTime createdAt
 ) {
@@ -15,7 +15,7 @@ public record DreamListResponse(
 
     public static DreamListResponse from(DreamHistory dreamHistory) {
         return new DreamListResponse(
-                dreamHistory.getDescription(),
+                dreamHistory.getAiSummary(),
                 dreamHistory.getImageUrl(),
                 dreamHistory.getCreatedAt()
         );

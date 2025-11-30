@@ -6,13 +6,13 @@ import lombok.Builder;
 @Builder
 public record DreamHistoryResponse(
         Long dreamHistoryId,
-        String description,
+        String aiSummary,
         String imageUrl
 ) {
     public static DreamHistoryResponse from(DreamHistory dreamHistory) {
         return DreamHistoryResponse.builder()
                 .dreamHistoryId(dreamHistory.getId())
-                .description(dreamHistory.getDescription())
+                .aiSummary(dreamHistory.getAiSummary())
                 .imageUrl(dreamHistory.getImageUrl())
                 .build();
     }
