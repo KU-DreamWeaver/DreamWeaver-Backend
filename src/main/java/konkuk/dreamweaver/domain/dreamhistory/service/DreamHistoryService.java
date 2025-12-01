@@ -56,7 +56,7 @@ public class DreamHistoryService {
 
         dreamHistoryKeywordRepository.saveAll(keywordEntities);
 
-        return DreamHistoryResponse.from(dreamHistory);
+        return DreamHistoryResponse.from(dreamHistory, keywords);
 
     }
 
